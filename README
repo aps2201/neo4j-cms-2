@@ -1,0 +1,46 @@
+# neo4j-CMS
+
+This is a CLI neo4j CMS tool for [my website](https://aps.web.id/). Its a nice little tool I've been using. To install it you need to create a `secrets/secrets.go` file in the following format:
+
+```
+package secrets
+
+var Neo4j_cred = map[string]string{
+	"NEO4J_URI":         [neo4j aura URL],
+	"NEO4J_USERNAME":    [neo4j db username],
+	"NEO4J_PASSWORD":    [neo4j db password],
+	"AURA_INSTANCEID":   [neo4j aura instance ID],
+	"AURA_INSTANCENAME": [neo4j aura instance name]
+}
+```
+
+you can get a free instance from the [neo4j Aura site](https://console.neo4j.io/)
+
+# Installation
+
+- Clone this repo.
+- Create a `secrets.go` file with the format above in `secrets/` folder.
+
+
+# Usage
+
+Within the active environment just write `cms [command]` most of it is self explanatory. If using uv, write `uv run cms`.
+
+Commands:
+  - delete-post [post-id]
+  - list-posts
+  - edit-post [post-id]
+  - write-post
+
+You can write, delete, update, and list the existing posts in your neo4j database.
+
+# How It Works
+
+This is a very simple app that reads and writes into a [neo4j auradb](https://neo4j.com/product/auradb/) database. It sets up a post by writing:
+- created date
+- author
+- modified date (if applicable)
+- source
+- category* (planned)
+
+Interacting with posts uses [Huh](https://github.com/charmbracelet/huh) forms.
