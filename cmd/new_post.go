@@ -23,6 +23,8 @@ var write_post = &cobra.Command{
 		var post_created string
 		var post_title string
 		var post_content string
+		var confirm bool
+
 		post_created = time.Now().Format("20060102150405")
 		form := huh.NewForm(
 			huh.NewGroup(
@@ -38,10 +40,17 @@ var write_post = &cobra.Command{
 					}
 					return nil
 				}),
+				huh.NewConfirm().
+					Title(fmt.Sprintf("Are you sure you want to edit %s?", post_title)).
+					Value(&confirm),
 			),
 		).WithTheme(huh.ThemeFunc(huh.ThemeBase16))
 		if err := form.Run(); err != nil {
 			slog.Error("Form failed", ":", err)
+		}
+		if !confirm {
+			cmd.Println("Post cancelled.")
+			return
 		}
 		post_id := writeNewPost(post_title, post_content, post_created)
 		cmd.Println(post_id)

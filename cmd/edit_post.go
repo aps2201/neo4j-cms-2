@@ -25,6 +25,7 @@ var edit_post = &cobra.Command{
 		var post_content string
 		var post_id string
 		var post_modified string
+		var confirm bool
 
 		if len(args[0]) < 8 {
 			slog.Error("post_id too short")
@@ -50,10 +51,17 @@ var edit_post = &cobra.Command{
 					}
 					return nil
 				}),
+				huh.NewConfirm().
+					Title(fmt.Sprintf("Are you sure you want to edit %s?", post_title)).
+					Value(&confirm),
 			),
 		).WithTheme(huh.ThemeFunc(huh.ThemeBase16))
 		if err := form.Run(); err != nil {
 			slog.Error("Form failed", ":", err)
+		}
+		if !confirm {
+			cmd.Println("Edit cancelled.")
+			return
 		}
 		writePost(post_id, post_title, post_content, post_modified)
 
@@ -93,7 +101,7 @@ func writePost(post_id string, post_title string, post_content string, post_modi
 	MATCH (p:Post {post_id:$post_id}) 
 	SET p.title = $post_title,
 		p.content = $post_content,
-		p.source = "cms"
+		p.source = "cms",
 		p.modified = $post_modified
 	`, map[string]any{"post_id": post_id,
 		"post_title":    post_title,
