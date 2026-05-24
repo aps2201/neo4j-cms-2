@@ -37,3 +37,6 @@ secrets.go
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# binary
+neo4j-cms-2
