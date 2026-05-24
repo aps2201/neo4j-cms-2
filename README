@@ -20,27 +20,42 @@ you can get a free instance from the [neo4j Aura site](https://console.neo4j.io/
 
 - Clone this repo.
 - Create a `secrets.go` file with the format above in `secrets/` folder.
+- Compile using `go build .`
 
 
 # Usage
 
-Within the active environment just write `cms [command]` most of it is self explanatory. If using uv, write `uv run cms`.
+You can either run it with `go run . [command]` or use the compiled binary and use the following commands.
 
 Commands:
-  - delete-post [post-id]
+  - delete-post [post-id] 
   - list-posts
   - edit-post [post-id]
   - write-post
 
-You can write, delete, update, and list the existing posts in your neo4j database.
+`edit-post` can use partial `post-id`  (first 8 characters is the minimum length), `delete-post` needs the full `post-id` string.
+
+You can write, delete, update, and list new and existing posts in your neo4j database.
 
 # How It Works
 
 This is a very simple app that reads and writes into a [neo4j auradb](https://neo4j.com/product/auradb/) database. It sets up a post by writing:
 - created date
 - author
-- modified date (if applicable)
-- source
-- category* (planned)
+- modified date (when edited)
+- source (when set to "cms", it is served on the website)
+- category* 
+- tags*
 
-Interacting with posts uses [Huh](https://github.com/charmbracelet/huh) forms.
+\* TODO
+
+Interacting with entries uses [Huh](https://github.com/charmbracelet/huh) forms.
+
+# Schemas
+
+## Post
+- author
+- content
+- created date
+- modified date
+- source
