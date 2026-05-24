@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"charm.land/huh/v2"
 	"github.com/neo4j/neo4j-go-driver/v6/neo4j"
@@ -23,6 +24,7 @@ var edit_post = &cobra.Command{
 		var post_title string
 		var post_content string
 		var post_id string
+		var post_modified string
 
 		if len(args[0]) < 8 {
 			slog.Error("post_id too short")
@@ -32,6 +34,7 @@ var edit_post = &cobra.Command{
 		post_title = post.Props["title"].(string)
 		post_content = post.Props["content"].(string)
 		post_id = post.Props["post_id"].(string)
+		post_modified = time.Now().Format("20060102150405")
 
 		form := huh.NewForm(
 			huh.NewGroup(
@@ -52,7 +55,7 @@ var edit_post = &cobra.Command{
 		if err := form.Run(); err != nil {
 			slog.Error("Form failed", ":", err)
 		}
-		writePost(post_id, post_title, post_content)
+		writePost(post_id, post_title, post_content, post_modified)
 
 	},
 }
@@ -83,7 +86,7 @@ func getPost(post_id string) (post neo4j.Node) {
 	return
 }
 
-func writePost(post_id string, post_title string, post_content string) {
+func writePost(post_id string, post_title string, post_content string, post_modified string) {
 	d := GetDriver()
 	ctx := context.Background()
 	_, err := neo4j.ExecuteQuery(ctx, d, `
@@ -91,9 +94,11 @@ func writePost(post_id string, post_title string, post_content string) {
 	SET p.title = $post_title,
 		p.content = $post_content,
 		p.source = "cms"
+		p.modified = $post_modified
 	`, map[string]any{"post_id": post_id,
-		"post_title":   post_title,
-		"post_content": post_content,
+		"post_title":    post_title,
+		"post_content":  post_content,
+		"post_modified": post_modified,
 	}, neo4j.EagerResultTransformer)
 	if err != nil {
 		slog.Error("cant execute query", "error:", err)
