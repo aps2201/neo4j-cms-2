@@ -29,7 +29,8 @@ var delete_post = &cobra.Command{
 					Title(fmt.Sprintf("Are you sure you want to delete post %s?", postID)).
 					Value(&confirm),
 			),
-		)
+		).WithTheme(huh.ThemeFunc(huh.ThemeBase16))
+
 		if err := form.Run(); err != nil {
 			slog.Error("Form failed", "error", err)
 			return

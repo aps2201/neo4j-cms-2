@@ -3,10 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log/slog"
-	"os"
-	"text/tabwriter"
 
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
 	"github.com/neo4j/neo4j-go-driver/v6/neo4j"
 	"github.com/spf13/cobra"
 )
@@ -37,27 +36,38 @@ func listPosts() {
 		panic(err)
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 100, 1, 1, ' ', 0)
-	_, err = fmt.Fprintln(w, "Title\t|", "Post ID")
-	if err != nil {
-		slog.Error("Something wrong", "error", err)
-	}
-	_, err = fmt.Fprintln(w, "--------------------------------------------------")
-	if err != nil {
-		slog.Error("Something wrong", "error", err)
-	}
-
+	t := table.New().
+		Border(lipgloss.NormalBorder()).
+		Headers("Title", "Post ID")
 	for _, record := range result.Records {
 		title, _ := record.Get("title")
 		post_id, _ := record.Get("post_id")
 
-		_, err = fmt.Fprintln(w, title, "\t|", post_id)
-		if err != nil {
-			slog.Error("Something wrong", "error", err)
-		}
-		err = w.Flush()
-		if err != nil {
-			slog.Error("Something wrong", "error", err)
-		}
+		t.Row(title.(string), post_id.(string))
 	}
+	fmt.Println(t)
 }
+
+// w := tabwriter.NewWriter(os.Stdout, 100, 1, 1, ' ', 0)
+// _, err = fmt.Fprintln(w, "Title\t|", "Post ID")
+// if err != nil {
+// 	slog.Error("Something wrong", "error", err)
+// }
+// _, err = fmt.Fprintln(w, "--------------------------------------------------")
+// if err != nil {
+// 	slog.Error("Something wrong", "error", err)
+// }
+
+// for _, record := range result.Records {
+// 	title, _ := record.Get("title")
+// 	post_id, _ := record.Get("post_id")
+
+// 	_, err = fmt.Fprintln(w, title, "\t|", post_id)
+// 	if err != nil {
+// 		slog.Error("Something wrong", "error", err)
+// 	}
+// 	err = w.Flush()
+// 	if err != nil {
+// 		slog.Error("Something wrong", "error", err)
+// 	}
+// }

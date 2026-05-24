@@ -48,7 +48,7 @@ var edit_post = &cobra.Command{
 					return nil
 				}),
 			),
-		)
+		).WithTheme(huh.ThemeFunc(huh.ThemeBase16))
 		if err := form.Run(); err != nil {
 			slog.Error("Form failed", ":", err)
 		}
