@@ -23,9 +23,11 @@ var write_post = &cobra.Command{
 		var post_created string
 		var post_title string
 		var post_content string
+		var post_source string
 		var confirm bool
 
 		post_created = time.Now().Format("20060102150405")
+		post_source = "cms"
 		form := huh.NewForm(
 			huh.NewGroup(
 				huh.NewInput().Title("Title").Value(&post_title).Validate(func(s string) error {
@@ -52,32 +54,32 @@ var write_post = &cobra.Command{
 			cmd.Println("Post cancelled.")
 			return
 		}
-		post_id := writeNewPost(post_title, post_content, post_created)
+		post_id := writeNewPost(post_title, post_content, post_created, post_source)
 		cmd.Println(post_id)
 
 	},
 }
 
-func writeNewPost(post_title string, post_content string, post_created string) (post_id string) {
+func writeNewPost(post_title string, post_content string, post_created string, post_source string) (post_id string) {
 	var post_uuid uuid.UUID
 	post_uuid, _ = uuid.NewRandom()
 	post_id = post_uuid.String()
 	d := GetDriver()
 	ctx := context.Background()
 	_, err := neo4j.ExecuteQuery(ctx, d, `
-	CREATE (p:Post {post_id:$post_id, source:"cms"}) 
+	CREATE (p:Post {post_id:$post_id, source:$post_source}) 
 	SET p.title = $post_title,
 		p.content 	= $post_content,
 		p.created = $post_created
+		p.source = $post_source
 	`, map[string]any{"post_id": post_id,
 		"post_title":   post_title,
 		"post_content": post_content,
 		"post_created": post_created,
+		"post_source":  post_source,
 	}, neo4j.EagerResultTransformer)
 	if err != nil {
 		slog.Error("cant execute query", "error:", err)
 	}
 	return
 }
-
-//TODO: write new post
