@@ -13,6 +13,7 @@ var Neo4j_cred = map[string]string{
 	"AURA_INSTANCENAME": [neo4j aura instance name]
 }
 ```
+TODO: I heard this is a really stupid way to keep credentials and very prone to security breach, will change to best practice when I have the time
 
 you can get a free instance from the [neo4j Aura site](https://console.neo4j.io/)
 
