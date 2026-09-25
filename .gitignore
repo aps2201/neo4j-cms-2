@@ -40,3 +40,6 @@ Thumbs.db
 
 # binary
 neo4j-cms-2
+
+# genai feature
+generate_post.go
