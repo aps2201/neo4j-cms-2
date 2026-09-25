@@ -70,7 +70,7 @@ func writeNewPost(post_title string, post_content string, post_created string, p
 	CREATE (p:Post {post_id:$post_id, source:$post_source}) 
 	SET p.title = $post_title,
 		p.content 	= $post_content,
-		p.created = $post_created
+		p.created = $post_created,
 		p.source = $post_source
 	`, map[string]any{"post_id": post_id,
 		"post_title":   post_title,
